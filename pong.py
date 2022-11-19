@@ -9,12 +9,15 @@ WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pong")
 # Set refresh rate
 FPS = 60
+# Set winning score
+WIN_SCORE = 5
 
 # Define the size of paddles and board elements
 PADDLE_WIDTH = 20
 PADDLE_HEIGHT = 100
 SEPARATOR_HEIGHT = HEIGHT // 20
-BALL_RADIUS = 7
+BALL_RADIUS = 9
+FONT = pygame.font.SysFont("calibri", 50)
 
 
 # Define the game colours
@@ -33,8 +36,8 @@ class Paddle:
 
     def __init__(self, colour, x, y, width, height):
         self.colour = colour
-        self.x = x
-        self.y = y
+        self.x = self.original_x = x
+        self.y = self.original_y = y
         self.width = width
         self.height = height
 
@@ -48,6 +51,10 @@ class Paddle:
         else:
             self.y += self.VELOCITY
 
+    def reset(self):
+        self.x = self.original_x
+        self.y = self.original_y
+
 
 class Ball:
     # Class attributes
@@ -55,8 +62,8 @@ class Ball:
 
     def __init__(self, colour, x, y, radius):
         self.colour = colour
-        self.x = x
-        self.y = y
+        self.x = self.original_x = x
+        self.y = self.original_y = y
         self.radius = radius
         self.x_velocity = self.MAX_X_VELOCITY
         self.y_velocity = 0
@@ -65,13 +72,28 @@ class Ball:
         pygame.draw.circle(win, self.colour, (self.x, self.y), self.radius)
 
     def move(self):
-        self.x = self.x_velocity
-        self.y = self.y_velocity
+        self.x += self.x_velocity
+        self.y += self.y_velocity
+
+    def reset(self):
+        self.x = self.original_x
+        self.y = self.original_y
+        self.y_velocity = 0
+        self.x_velocity *= -1
 
 
-def draw(window, paddles, ball):
+def draw(window, paddles, ball, player_score, bot_score):
     # Make the windows background black
     window.fill(BLACK)
+
+    # Draw the scores
+    player_score_text = FONT.render(f"{player_score}", 1, RED)
+    bot_score_text = FONT.render(f"{bot_score}", 1, TURQUOISE)
+    # blit = "draw"
+    WINDOW.blit(player_score_text,
+                ((WIDTH//2 - player_score_text.get_width()//2) - 50, 1))
+    WINDOW.blit(bot_score_text,
+                ((WIDTH//2 - bot_score_text.get_width()//2) + 50, 1))
 
     for paddle in paddles:
         # Call the paddles draw method on each paddle
@@ -90,6 +112,41 @@ def draw(window, paddles, ball):
 
     # Refresh the display
     pygame.display.update()
+
+
+def collision(ball, player_paddle, bot_paddle):
+    if ball.y + ball.radius >= HEIGHT:
+        ball.y_velocity *= -1
+    elif ball.y - ball.radius <= 0:
+        ball.y_velocity *= -1
+
+    # For player_paddle
+    if ball.x_velocity < 0:
+        if ball.y >= player_paddle.y and ball.y <= player_paddle.y + player_paddle.height:
+            if ball.x - ball.radius <= player_paddle.x + player_paddle.width:
+                ball.x_velocity = -ball.x_velocity
+
+                middle_y = player_paddle.y + player_paddle.height / 2
+                y_diff = middle_y - ball.y
+                # How much to reduce angle of output by
+                reduction_factor = (player_paddle.height /
+                                    2) / ball.MAX_X_VELOCITY
+                y_velocity = y_diff / reduction_factor
+                ball.y_velocity = -y_velocity
+
+    # For bot_paddle
+    else:
+        if ball.y >= bot_paddle.y and ball.y <= bot_paddle.y + bot_paddle.height:
+            if ball.x + ball.radius >= bot_paddle.x:
+                ball.x_velocity = -ball.x_velocity
+
+                middle_y = bot_paddle.y + bot_paddle.height / 2
+                y_diff = middle_y - ball.y
+                # How much to reduce angle of output by
+                reduction_factor = (bot_paddle.height / 2) / \
+                    ball.MAX_X_VELOCITY
+                y_velocity = y_diff / reduction_factor
+                ball.y_velocity = -y_velocity
 
 
 def paddle_movement(keys, player_paddle, bot_paddle):
@@ -117,10 +174,14 @@ def main():
                         HEIGHT//2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT)
     ball = Ball(GOLD, WIDTH//2, HEIGHT//2, BALL_RADIUS)
 
+    player_score = 0
+    bot_score = 0
+
     while run:
         # Set the tick speed
         clock.tick(FPS)
-        draw(WINDOW, [player_paddle, bot_paddle], ball)
+        draw(WINDOW, [player_paddle, bot_paddle],
+             ball, player_score, bot_score)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -130,6 +191,34 @@ def main():
 
         keys = pygame.key.get_pressed()
         paddle_movement(keys, player_paddle, bot_paddle)
+        ball.move()
+        collision(ball, player_paddle, bot_paddle)
+
+        won = False
+
+        if ball.x < 0:
+            bot_score += 1
+            ball.reset()
+            player_paddle.reset()
+            bot_paddle.reset()
+        elif ball.x >= WIDTH:
+            player_score += 1
+            ball.reset()
+            player_paddle.reset()
+            bot_paddle.reset()
+
+        if player_score >= WIN_SCORE:
+            won = True
+        elif bot_score >= WIN_SCORE:
+            won = True
+
+        if won:
+            pygame.time.delay(1000)
+            ball.reset()
+            player_paddle.reset()
+            bot_paddle.reset()
+            player_score = 0
+            bot_score = 0
 
     pygame.quit()
 
