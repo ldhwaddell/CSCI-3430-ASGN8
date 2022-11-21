@@ -163,7 +163,22 @@ def paddle_movement(keys, player_paddle, bot_paddle):
         bot_paddle.move(up=False)
 
 
-def main():
+def score_game(paddle1, paddle2, paddle1_score, paddle2_score, ball):
+    if ball.x < 0:
+        paddle2_score += 1
+        ball.reset()
+        paddle1.reset()
+        paddle2.reset()
+    elif ball.x >= WIDTH:
+        paddle1_score += 1
+        ball.reset()
+        paddle1.reset()
+        paddle2.reset()
+
+    return paddle1_score, paddle2_score
+
+
+def pong_game():
     run = True
     # Create a clock to be able to cap the speed at which screen is refreshed
     clock = pygame.time.Clock()
@@ -196,16 +211,8 @@ def main():
 
         won = False
 
-        if ball.x < 0:
-            bot_score += 1
-            ball.reset()
-            player_paddle.reset()
-            bot_paddle.reset()
-        elif ball.x >= WIDTH:
-            player_score += 1
-            ball.reset()
-            player_paddle.reset()
-            bot_paddle.reset()
+        player_score, bot_score = score_game(
+            player_paddle, bot_paddle, player_score, bot_score, ball)
 
         if player_score >= WIN_SCORE:
             won = True
@@ -222,6 +229,12 @@ def main():
 
     pygame.quit()
 
+def main_menu():
+    run = True
+
+    while run:
+        clock = pygame.time.Clock()
+
 
 if __name__ == "__main__":
-    main()
+    pong_game()
