@@ -229,12 +229,63 @@ def pong_game():
 
     pygame.quit()
 
-def main_menu():
-    run = True
+# Text Renderer
+def text_format(message, textFont, textSize, textColor):
+    newFont=pygame.font.Font(textFont, textSize)
+    newText=newFont.render(message, 0, textColor)
 
-    while run:
-        clock = pygame.time.Clock()
+    return newText
+
+def main_menu():
+    clock = pygame.time.Clock()
+    menu = True
+    selected = "2_player"
+
+    while menu:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                menu = False
+                print("[+] User has exited game")
+                break
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.KEYUP:
+                    selected = "2_player"
+                elif event.key == pygame.KEYDOWN:
+                    selected = "quit"
+                if event.key==pygame.K_RETURN:
+                    if selected=="2_player":
+                        print("2_player")
+                    if selected=="quit":
+                        menu = False
+                        print("[+] User has exited game")
+                        pygame.quit()
+                        break
+        # Main menu text
+        title = text_format("PONG", "Retro.ttf", 90, WHITE)
+        if selected == "2_player":
+            text_2_player = text_format("2 Player", "Retro.ttf",75, RED)
+        else:
+            text_2_player = text_format("2 Player", "Retro.ttf",75, WHITE)
+        if selected == "2_player":
+            quit = text_format("Quit", "Retro.ttf",75, RED)
+        else:
+            quit = text_format("Quit", "Retro.ttf",75, WHITE)
+
+        title_rect = title.get_rect()
+        text_2_player_rect = text_2_player.get_rect()
+        quit_rect = quit.get_rect()
+
+        WINDOW.blit(title, (WIDTH/2 - (title_rect[2]/2), 80))
+        WINDOW.blit(text_2_player, (WIDTH/2 - (text_2_player_rect[2]/2), 300))
+        WINDOW.blit(quit, (WIDTH/2 - (quit_rect[2]/2), 360))
+        pygame.display.update()
+        clock.tick(FPS)
+    pygame.quit()
+
+
 
 
 if __name__ == "__main__":
-    pong_game()
+    #pong_game()
+    main_menu()
+    
