@@ -278,7 +278,7 @@ def game_over_menu(winner, gamemode):
                     if selected == "play_again":
                         pong_game(gamemode)
                     elif selected == "diff_game_mode":
-                        print("diff game mode")
+                        main_menu()
                     elif selected == "quit":
                         game_over = False
                         print("[+] User has exited the game")
@@ -322,6 +322,8 @@ def game_over_menu(winner, gamemode):
 
 
 def main_menu():
+    WINDOW.fill((0, 0, 0))
+    pygame.display.set_caption("Main Menu")
     clock = pygame.time.Clock()
     menu = True
     selected = "2_player"
