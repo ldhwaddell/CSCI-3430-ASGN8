@@ -1,3 +1,5 @@
+import sys
+
 import pygame
 pygame.init()
 
@@ -5,19 +7,21 @@ pygame.init()
 WIDTH = 700
 HEIGHT = 500
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
-# Set the windows text to be Pong
-pygame.display.set_caption("Pong")
 # Set refresh rate
 FPS = 60
 # Set winning score
-WIN_SCORE = 5
+WIN_SCORE = 2
 
 # Define the size of paddles and board elements
 PADDLE_WIDTH = 20
 PADDLE_HEIGHT = 100
 SEPARATOR_HEIGHT = HEIGHT // 20
 BALL_RADIUS = 9
-FONT = pygame.font.SysFont("calibri", 50)
+FONT = pygame.font.Font("resources/fonts/SuperMario256.ttf", 45)
+TITLE_FONT = pygame.font.Font("resources/fonts/SuperMario256.ttf", 65)
+WIN_FONT = pygame.font.Font("resources/fonts/SuperMario256.ttf", 60)
+WIN_SOUND = "resources/sounds/smb_stage_clear.wav"
+LOSS_SOUND = "resources/sounds/smb_mariodie.wav"
 
 
 # Define the game colours
@@ -114,7 +118,7 @@ def draw(window, paddles, ball, player_score, bot_score):
     pygame.display.update()
 
 
-def collision(ball, player_paddle, bot_paddle):
+def check_collision(ball, player_paddle, bot_paddle):
     if ball.y + ball.radius >= HEIGHT:
         ball.y_velocity *= -1
     elif ball.y - ball.radius <= 0:
@@ -128,7 +132,7 @@ def collision(ball, player_paddle, bot_paddle):
 
                 middle_y = player_paddle.y + player_paddle.height / 2
                 y_diff = middle_y - ball.y
-                # How much to reduce angle of output by
+                # How much to reduce angle of bounce by
                 reduction_factor = (player_paddle.height /
                                     2) / ball.MAX_X_VELOCITY
                 y_velocity = y_diff / reduction_factor
@@ -142,7 +146,7 @@ def collision(ball, player_paddle, bot_paddle):
 
                 middle_y = bot_paddle.y + bot_paddle.height / 2
                 y_diff = middle_y - ball.y
-                # How much to reduce angle of output by
+                # How much to reduce angle of bounce by
                 reduction_factor = (bot_paddle.height / 2) / \
                     ball.MAX_X_VELOCITY
                 y_velocity = y_diff / reduction_factor
@@ -178,7 +182,9 @@ def score_game(paddle1, paddle2, paddle1_score, paddle2_score, ball):
     return paddle1_score, paddle2_score
 
 
-def pong_game():
+def pong_game(gamemode):
+    # Set the windows text to be Pong
+    pygame.display.set_caption("Pong")
     run = True
     # Create a clock to be able to cap the speed at which screen is refreshed
     clock = pygame.time.Clock()
@@ -200,14 +206,19 @@ def pong_game():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                # Empty screen
+                WINDOW.fill((0, 0, 0))
                 run = False
                 print("[+] User has exited game")
-                break
+                pygame.quit(), sys.exit()
 
         keys = pygame.key.get_pressed()
-        paddle_movement(keys, player_paddle, bot_paddle)
+
+        if gamemode == "2_player":
+            paddle_movement(keys, player_paddle, bot_paddle)
+
         ball.move()
-        collision(ball, player_paddle, bot_paddle)
+        check_collision(ball, player_paddle, bot_paddle)
 
         won = False
 
@@ -216,25 +227,99 @@ def pong_game():
 
         if player_score >= WIN_SCORE:
             won = True
+            winner = "Player 1"
         elif bot_score >= WIN_SCORE:
             won = True
+            winner = "Player 2"
 
         if won:
-            pygame.time.delay(1000)
-            ball.reset()
-            player_paddle.reset()
-            bot_paddle.reset()
-            player_score = 0
-            bot_score = 0
+            # Play Sound
+            pygame.mixer.init()
+            pygame.mixer.music.load(WIN_SOUND)
+            pygame.mixer.music.play(loops=1)
+            game_over_menu(winner, gamemode)
 
-    pygame.quit()
 
-# Text Renderer
-def text_format(message, textFont, textSize, textColor):
-    newFont=pygame.font.Font(textFont, textSize)
-    newText=newFont.render(message, 0, textColor)
+def game_over_menu(winner, gamemode):
+    WINDOW.fill((0, 0, 0))
+    pygame.display.set_caption("Game Over")
+    clock = pygame.time.Clock()
+    game_over = True
+    selected = "play_again"
 
-    return newText
+    while game_over:
+        clock.tick(FPS)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game_over = False
+                print("[+] User has exited game")
+                pygame.quit(), sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+                # Logic for user pressing up arrow key
+                if event.key == pygame.K_UP and selected == "play_again":
+                    selected = "play_again"
+                elif event.key == pygame.K_UP and selected == "diff_game_mode":
+                    selected = "play_again"
+                elif event.key == pygame.K_UP and selected == "quit":
+                    selected = "diff_game_mode"
+
+                # Logic for user pressing down arrow key
+                if event.key == pygame.K_DOWN and selected == "play_again":
+                    selected = "diff_game_mode"
+                elif event.key == pygame.K_DOWN and selected == "diff_game_mode":
+                    selected = "quit"
+                elif event.key == pygame.K_DOWN and selected == "quit":
+                    selected = "quit"
+
+                # Logic for user pressing enter on selection
+                if event.key == pygame.K_RETURN:
+                    if selected == "play_again":
+                        pong_game(gamemode)
+                    elif selected == "diff_game_mode":
+                        print("diff game mode")
+                    elif selected == "quit":
+                        game_over = False
+                        print("[+] User has exited the game")
+                        pygame.quit(), sys.exit()
+
+        # Main menu text
+        title = WIN_FONT.render(f"{winner} has Won!", 1, WHITE)
+
+        # Options text
+        if selected == "play_again":
+            text_play_again = FONT.render("Play Again", 1, RED)
+        else:
+            text_play_again = FONT.render("Play Again", 1, WHITE)
+
+        if selected == "diff_game_mode":
+            text_diff_game_mode = FONT.render(
+                "Different Game Mode", 1, RED)
+        else:
+            text_diff_game_mode = FONT.render(
+                "Different Game Mode", 1, WHITE)
+
+        if selected == "quit":
+            quit = FONT.render("Quit", 1, RED)
+        else:
+            quit = FONT.render("Quit", 1, WHITE)
+
+        # The space between each game option (with 10 px buffer)
+        vertical_offset = text_play_again.get_height() + 10
+
+        # Draw the title and text options. The center of screen is found and then text is moved 40 pixels up to ensure spacing fits correctly
+        WINDOW.blit(title, (WIDTH // 2 - title.get_width()//2, 30))
+        WINDOW.blit(text_play_again, (WIDTH // 2 - text_play_again.get_width() //
+                    2, HEIGHT//2 - text_play_again.get_height()//2))
+        WINDOW.blit(text_diff_game_mode, (WIDTH // 2 - text_diff_game_mode.get_width() //
+                    2, (HEIGHT//2 - text_diff_game_mode.get_height()//2) + vertical_offset))
+        WINDOW.blit(quit, (WIDTH // 2 - quit.get_width()//2,
+                    (HEIGHT//2 - quit.get_height()//2) + 2 * (vertical_offset)))
+
+        # Refresh display to show selection
+        pygame.display.update()
+
 
 def main_menu():
     clock = pygame.time.Clock()
@@ -242,50 +327,90 @@ def main_menu():
     selected = "2_player"
 
     while menu:
+        clock.tick(FPS)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 menu = False
                 print("[+] User has exited game")
-                break
+                pygame.quit(), sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.KEYUP:
+                # Logic for user pressing up arrow key
+                if event.key == pygame.K_UP and selected == "2_player":
                     selected = "2_player"
-                elif event.key == pygame.KEYDOWN:
+                elif event.key == pygame.K_UP and selected == "1_player_hardcoded_bot":
+                    selected = "2_player"
+                elif event.key == pygame.K_UP and selected == "1_player_trained_bot":
+                    selected = "1_player_hardcoded_bot"
+                elif event.key == pygame.K_UP and selected == "quit":
+                    selected = "1_player_trained_bot"
+
+                # Logic for user pressing down arrow key
+                if event.key == pygame.K_DOWN and selected == "2_player":
+                    selected = "1_player_hardcoded_bot"
+                elif event.key == pygame.K_DOWN and selected == "1_player_hardcoded_bot":
+                    selected = "1_player_trained_bot"
+                elif event.key == pygame.K_DOWN and selected == "1_player_trained_bot":
                     selected = "quit"
-                if event.key==pygame.K_RETURN:
-                    if selected=="2_player":
-                        print("2_player")
-                    if selected=="quit":
+
+                # Logic for user pressing enter on selection
+                if event.key == pygame.K_RETURN:
+                    if selected == "2_player":
+                        pong_game("2_player")
+                    elif selected == "1_player_hardcoded_bot":
+                        print("1_player_hardcoded_bot")
+                    elif selected == "1_player_trained_bot":
+                        print("1_player_trained_bot")
+                    elif selected == "quit":
                         menu = False
                         print("[+] User has exited game")
-                        pygame.quit()
-                        break
+                        pygame.quit(), sys.exit()
+
         # Main menu text
-        title = text_format("PONG", "Retro.ttf", 90, WHITE)
-        if selected == "2_player":
-            text_2_player = text_format("2 Player", "Retro.ttf",75, RED)
-        else:
-            text_2_player = text_format("2 Player", "Retro.ttf",75, WHITE)
-        if selected == "2_player":
-            quit = text_format("Quit", "Retro.ttf",75, RED)
-        else:
-            quit = text_format("Quit", "Retro.ttf",75, WHITE)
+        title = TITLE_FONT.render("PONG", 1, WHITE)
 
-        title_rect = title.get_rect()
-        text_2_player_rect = text_2_player.get_rect()
-        quit_rect = quit.get_rect()
+        # Options text
+        if selected == "2_player":
+            text_2_player = FONT.render("2 Player", 1, RED)
+        else:
+            text_2_player = FONT.render("2 Player", 1, WHITE)
 
-        WINDOW.blit(title, (WIDTH/2 - (title_rect[2]/2), 80))
-        WINDOW.blit(text_2_player, (WIDTH/2 - (text_2_player_rect[2]/2), 300))
-        WINDOW.blit(quit, (WIDTH/2 - (quit_rect[2]/2), 360))
+        if selected == "1_player_hardcoded_bot":
+            text_1_player_hardcoded_bot = FONT.render(
+                "1 Player Hardcoded Bot", 1, RED)
+        else:
+            text_1_player_hardcoded_bot = FONT.render(
+                "1 Player Hardcoded Bot", 1, WHITE)
+
+        if selected == "1_player_trained_bot":
+            text_1_player_trained_bot = FONT.render(
+                "1 Player trained Bot", 1, RED)
+        else:
+            text_1_player_trained_bot = FONT.render(
+                "1 Player trained Bot", 1, WHITE)
+
+        if selected == "quit":
+            quit = FONT.render("Quit", 1, RED)
+        else:
+            quit = FONT.render("Quit", 1, WHITE)
+
+        # The space between each game option (with 10 px buffer)
+        vertical_offset = text_2_player.get_height() + 10
+
+        # Draw the title and text options. The center of screen is found and then text is moved 40 pixels up to ensure spacing fits correctly
+        WINDOW.blit(title, (WIDTH // 2 - title.get_width()//2, 30))
+        WINDOW.blit(text_2_player, (WIDTH // 2 - text_2_player.get_width() //
+                    2, HEIGHT//2-text_2_player.get_height()//2 - 40))
+        WINDOW.blit(text_1_player_hardcoded_bot, (WIDTH // 2 - text_1_player_hardcoded_bot.get_width() //
+                    2, (HEIGHT//2-text_1_player_hardcoded_bot.get_height()//2 - 40) + vertical_offset))
+        WINDOW.blit(text_1_player_trained_bot, (WIDTH // 2 - text_1_player_trained_bot.get_width() //
+                    2, (HEIGHT//2-text_1_player_trained_bot.get_height()//2 - 40) + 2*(vertical_offset)))
+        WINDOW.blit(quit, (WIDTH // 2 - quit.get_width()//2,
+                    (HEIGHT//2-quit.get_height()//2 - 40) + 3*(vertical_offset)))
+
+        # Refresh display to show selection
         pygame.display.update()
-        clock.tick(FPS)
-    pygame.quit()
-
-
 
 
 if __name__ == "__main__":
-    #pong_game()
     main_menu()
-    
