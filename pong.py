@@ -17,9 +17,9 @@ PADDLE_WIDTH = 20
 PADDLE_HEIGHT = 100
 SEPARATOR_HEIGHT = HEIGHT // 20
 BALL_RADIUS = 9
-FONT = pygame.font.Font("resources/fonts/SuperMario256.ttf", 45)
-TITLE_FONT = pygame.font.Font("resources/fonts/SuperMario256.ttf", 65)
-WIN_FONT = pygame.font.Font("resources/fonts/SuperMario256.ttf", 60)
+FONT = pygame.font.Font("resources/fonts/ARCADECLASSIC.ttf", 60)
+TITLE_FONT = pygame.font.Font("resources/fonts/ARCADECLASSIC.ttf", 85)
+WIN_FONT = pygame.font.Font("resources/fonts/ARCADECLASSIC.ttf", 60)
 WIN_SOUND = "resources/sounds/smb_stage_clear.wav"
 LOSS_SOUND = "resources/sounds/smb_mariodie.wav"
 
