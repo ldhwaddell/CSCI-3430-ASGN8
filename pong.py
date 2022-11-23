@@ -1,5 +1,8 @@
 import sys
 
+from ball import Ball
+from paddle import Paddle
+
 import pygame
 pygame.init()
 
@@ -10,7 +13,7 @@ WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 # Set refresh rate
 FPS = 60
 # Set winning score
-WIN_SCORE = 2
+WIN_SCORE = 5
 
 # Define the size of paddles and board elements
 PADDLE_WIDTH = 20
@@ -30,60 +33,6 @@ TURQUOISE = (0, 255, 255)
 BLACK = (0, 0, 0)
 GOLD = (255, 215, 0)
 WHITE = (255, 255, 255)
-
-# In pygame, (0, 0) is top left corner
-
-
-class Paddle:
-    # Class attributes
-    VELOCITY = 4  # Move 4 units
-
-    def __init__(self, colour, x, y, width, height):
-        self.colour = colour
-        self.x = self.original_x = x
-        self.y = self.original_y = y
-        self.width = width
-        self.height = height
-
-    def draw(self, win):
-        pygame.draw.rect(win, self.colour,
-                         (self.x, self.y, self.width, self.height))
-
-    def move(self, up=True):
-        if up:
-            self.y -= self.VELOCITY
-        else:
-            self.y += self.VELOCITY
-
-    def reset(self):
-        self.x = self.original_x
-        self.y = self.original_y
-
-
-class Ball:
-    # Class attributes
-    MAX_X_VELOCITY = 5
-
-    def __init__(self, colour, x, y, radius):
-        self.colour = colour
-        self.x = self.original_x = x
-        self.y = self.original_y = y
-        self.radius = radius
-        self.x_velocity = self.MAX_X_VELOCITY
-        self.y_velocity = 0
-
-    def draw(self, win):
-        pygame.draw.circle(win, self.colour, (self.x, self.y), self.radius)
-
-    def move(self):
-        self.x += self.x_velocity
-        self.y += self.y_velocity
-
-    def reset(self):
-        self.x = self.original_x
-        self.y = self.original_y
-        self.y_velocity = 0
-        self.x_velocity *= -1
 
 
 def draw(window, paddles, ball, player_score, bot_score):
@@ -118,7 +67,7 @@ def draw(window, paddles, ball, player_score, bot_score):
     pygame.display.update()
 
 
-def check_collision(ball, player_paddle, bot_paddle):
+def check_collision(ball, paddle1, paddle2):
     if ball.y + ball.radius >= HEIGHT:
         ball.y_velocity *= -1
     elif ball.y - ball.radius <= 0:
@@ -126,45 +75,72 @@ def check_collision(ball, player_paddle, bot_paddle):
 
     # For player_paddle
     if ball.x_velocity < 0:
-        if ball.y >= player_paddle.y and ball.y <= player_paddle.y + player_paddle.height:
-            if ball.x - ball.radius <= player_paddle.x + player_paddle.width:
+        if ball.y >= paddle1.y and ball.y <= paddle1.y + paddle1.height:
+            if ball.x - ball.radius <= paddle1.x + paddle1.width:
                 ball.x_velocity = -ball.x_velocity
 
-                middle_y = player_paddle.y + player_paddle.height / 2
+                middle_y = paddle1.y + paddle1.height / 2
                 y_diff = middle_y - ball.y
                 # How much to reduce angle of bounce by
-                reduction_factor = (player_paddle.height /
+                reduction_factor = (paddle1.height /
                                     2) / ball.MAX_X_VELOCITY
                 y_velocity = y_diff / reduction_factor
                 ball.y_velocity = -y_velocity
 
     # For bot_paddle
     else:
-        if ball.y >= bot_paddle.y and ball.y <= bot_paddle.y + bot_paddle.height:
-            if ball.x + ball.radius >= bot_paddle.x:
+        if ball.y >= paddle2.y and ball.y <= paddle2.y + paddle2.height:
+            if ball.x + ball.radius >= paddle2.x:
                 ball.x_velocity = -ball.x_velocity
 
-                middle_y = bot_paddle.y + bot_paddle.height / 2
+                middle_y = paddle2.y + paddle2.height / 2
                 y_diff = middle_y - ball.y
                 # How much to reduce angle of bounce by
-                reduction_factor = (bot_paddle.height / 2) / \
+                reduction_factor = (paddle2.height / 2) / \
                     ball.MAX_X_VELOCITY
                 y_velocity = y_diff / reduction_factor
                 ball.y_velocity = -y_velocity
 
 
-def paddle_movement(keys, player_paddle, bot_paddle):
-    # Player movement
-    if keys[pygame.K_q] and player_paddle.y - player_paddle.VELOCITY >= 0:
-        player_paddle.move()
-    if keys[pygame.K_a] and player_paddle.y + player_paddle.VELOCITY + player_paddle.height <= HEIGHT:
-        player_paddle.move(up=False)
+def two_player_paddle_movement(keys, paddle1, paddle2):
+    # Player 1 movement
+    if keys[pygame.K_q] and paddle1.y - paddle1.VELOCITY >= 0:
+        paddle1.move()
+    if keys[pygame.K_a] and paddle1.y + paddle1.VELOCITY + paddle1.height <= HEIGHT:
+        paddle1.move(up=False)
 
-    # Bot movement
-    if keys[pygame.K_UP] and bot_paddle.y - bot_paddle.VELOCITY >= 0:
-        bot_paddle.move()
-    if keys[pygame.K_DOWN] and bot_paddle.y + bot_paddle.VELOCITY + bot_paddle.height <= HEIGHT:
-        bot_paddle.move(up=False)
+    # Player 2 movement
+    if keys[pygame.K_UP] and paddle2.y - paddle2.VELOCITY >= 0:
+        paddle2.move()
+    if keys[pygame.K_DOWN] and paddle2.y + paddle2.VELOCITY + paddle2.height <= HEIGHT:
+        paddle2.move(up=False)
+
+
+def hardcoded_bot_paddle_movement(keys, ball, paddle1, paddle2):
+    # Player 1 movement
+    if keys[pygame.K_q] and paddle1.y - paddle1.VELOCITY >= 0:
+        paddle1.move()
+    if keys[pygame.K_a] and paddle1.y + paddle1.VELOCITY + paddle1.height <= HEIGHT:
+        paddle1.move(up=False)
+
+    # Bot movememnt for paddle 2
+
+    # If the paddle is already at top of bottom of screen, stay there
+    if paddle2.y <= 0:
+        paddle2.y = 0
+    elif paddle2.y >= 400:
+        paddle2.y = 400
+
+    
+    if ball.y <= paddle2.y + (PADDLE_HEIGHT // 2) and ball.y - paddle2.y - (PADDLE_HEIGHT // 2) < -4:
+        paddle2.move(up=True)
+    elif ball.y <= paddle2.y + (PADDLE_HEIGHT // 2):
+        paddle2.y -= 1
+
+    if ball.y >= paddle2.y + (PADDLE_HEIGHT // 2) and ball.y - paddle2.y - (PADDLE_HEIGHT // 2) > 4:
+        paddle2.move(up=False)
+    elif ball.y >= paddle2.y + (PADDLE_HEIGHT // 2):
+        paddle2.y += 1
 
 
 def score_game(paddle1, paddle2, paddle1_score, paddle2_score, ball):
@@ -189,10 +165,10 @@ def pong_game(gamemode):
     # Create a clock to be able to cap the speed at which screen is refreshed
     clock = pygame.time.Clock()
 
-    player_paddle = Paddle(RED, 10, HEIGHT//2 -
-                           PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT)
-    bot_paddle = Paddle(TURQUOISE, WIDTH - 10 - PADDLE_WIDTH,
-                        HEIGHT//2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT)
+    paddle1 = Paddle(RED, 10, HEIGHT//2 -
+                     PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT)
+    paddle2 = Paddle(TURQUOISE, WIDTH - 10 - PADDLE_WIDTH,
+                     HEIGHT//2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT)
     ball = Ball(GOLD, WIDTH//2, HEIGHT//2, BALL_RADIUS)
 
     player_score = 0
@@ -201,7 +177,7 @@ def pong_game(gamemode):
     while run:
         # Set the tick speed
         clock.tick(FPS)
-        draw(WINDOW, [player_paddle, bot_paddle],
+        draw(WINDOW, [paddle1, paddle2],
              ball, player_score, bot_score)
 
         for event in pygame.event.get():
@@ -215,15 +191,17 @@ def pong_game(gamemode):
         keys = pygame.key.get_pressed()
 
         if gamemode == "2_player":
-            paddle_movement(keys, player_paddle, bot_paddle)
+            two_player_paddle_movement(keys, paddle1, paddle2)
+        elif gamemode == "1_player_hardcoded_bot":
+            hardcoded_bot_paddle_movement(keys, ball, paddle1, paddle2)
 
         ball.move()
-        check_collision(ball, player_paddle, bot_paddle)
+        check_collision(ball, paddle1, paddle2)
 
         won = False
 
         player_score, bot_score = score_game(
-            player_paddle, bot_paddle, player_score, bot_score, ball)
+            paddle1, paddle2, player_score, bot_score, ball)
 
         if player_score >= WIN_SCORE:
             won = True
@@ -360,7 +338,7 @@ def main_menu():
                     if selected == "2_player":
                         pong_game("2_player")
                     elif selected == "1_player_hardcoded_bot":
-                        print("1_player_hardcoded_bot")
+                        pong_game("1_player_hardcoded_bot")
                     elif selected == "1_player_trained_bot":
                         print("1_player_trained_bot")
                     elif selected == "quit":
