@@ -32,6 +32,6 @@ class Game:
         self.right_paddle = Paddle(self.TURQUOISE, self.width - 10 -
                               Paddle.WIDTH, self.height // 2 - Paddle.HEIGHT // 2)
 
-        self.ball
+        self.ball = Ball(self.GOLD, self.width // 2, self.height // 2)
 
         

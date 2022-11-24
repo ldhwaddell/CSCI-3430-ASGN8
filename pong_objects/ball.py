@@ -4,17 +4,17 @@ class Ball:
     """"""
     # Class attributes
     MAX_X_VELOCITY = 4
+    RADIUS = 9
 
-    def __init__(self, colour, x, y, radius):
+    def __init__(self, colour, x, y):
         self.colour = colour
         self.x = self.original_x = x
         self.y = self.original_y = y
-        self.radius = radius
         self.x_velocity = self.MAX_X_VELOCITY
         self.y_velocity = 0
 
     def draw(self, win):
-        pygame.draw.circle(win, self.colour, (self.x, self.y), self.radius)
+        pygame.draw.circle(win, self.colour, (self.x, self.y), self.RADIUS)
 
     def move(self):
         self.x += self.x_velocity
