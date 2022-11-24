@@ -1,6 +1,7 @@
 import sys
 
 import pygame
+from .utils import create_font
 
 
 class Menus:
@@ -27,18 +28,6 @@ class Menus:
         self.fps = fps
         self.width = width
         self.height = height
-
-    def create_font(self, text, size, colour):
-        """
-        Create a font with the given parameters. 
-
-        Parameters: 
-            text: The text to be displayed in the font
-            size: The size of the font in pixels
-            colour: The colour of the font
-        """
-        font = pygame.font.Font(self.font_path, size)
-        return font.render(text, 1, colour)
 
     def main_menu(self):
         """
@@ -95,32 +84,34 @@ class Menus:
                             pygame.quit(), sys.exit()
 
             # Main menu text
-            title = self.create_font("PONG", 85, self.WHITE)
+            title = create_font(self.font_path, "PONG", 85, self.WHITE)
 
             # Options text
             if selected == "2_player":
-                text_2_player = self.create_font("2 Player", 60, self.RED)
+                text_2_player = create_font(
+                    self.font_path, "2 Player", 60, self.RED)
             else:
-                text_2_player = self.create_font("2 Player", 60, self.WHITE)
+                text_2_player = create_font(
+                    self.font_path, "2 Player", 60, self.WHITE)
 
             if selected == "1_player_hardcoded_bot":
-                text_1_player_hardcoded_bot = self.create_font(
-                    "1 Player Hardcoded Bot", 60, self.RED)
+                text_1_player_hardcoded_bot = create_font(
+                    self.font_path, "1 Player Hardcoded Bot", 60, self.RED)
             else:
-                text_1_player_hardcoded_bot = self.create_font(
-                    "1 Player Hardcoded Bot", 60, self.WHITE)
+                text_1_player_hardcoded_bot = create_font(
+                    self.font_path, "1 Player Hardcoded Bot", 60, self.WHITE)
 
             if selected == "1_player_trained_bot":
-                text_1_player_trained_bot = self.create_font(
-                    "1 Player trained Bot", 60, self.RED)
+                text_1_player_trained_bot = create_font(
+                    self.font_path, "1 Player trained Bot", 60, self.RED)
             else:
-                text_1_player_trained_bot = self.create_font(
-                    "1 Player trained Bot", 60, self.WHITE)
+                text_1_player_trained_bot = create_font(
+                    self.font_path, "1 Player trained Bot", 60, self.WHITE)
 
             if selected == "quit":
-                quit = self.create_font("Quit", 60, self.RED)
+                quit = create_font(self.font_path, "Quit", 60, self.RED)
             else:
-                quit = self.create_font("Quit", 60, self.WHITE)
+                quit = create_font(self.font_path, "Quit", 60, self.WHITE)
 
             # The space between each game option (with 10 px buffer)
             vertical_offset = text_2_player.get_height() + 10
@@ -195,26 +186,28 @@ class Menus:
                             pygame.quit(), sys.exit()
 
             # Main menu text
-            title = self.create_font(f"{winner} has Won!", 60, self.WHITE)
+            title = create_font(
+                self.font_path, f"{winner} has Won!", 60, self.WHITE)
 
             # Options text
             if selected == "play_again":
-                text_play_again = self.create_font("Play Again", 60, self.RED)
+                text_play_again = create_font(
+                    self.font_path, "Play Again", 60, self.RED)
             else:
-                text_play_again = self.create_font(
-                    "Play Again", 60, self.WHITE)
+                text_play_again = create_font(
+                    self.font_path, "Play Again", 60, self.WHITE)
 
             if selected == "diff_game_mode":
-                text_diff_game_mode = self.create_font(
-                    "Different Game Mode", 60, self.RED)
+                text_diff_game_mode = create_font(
+                    self.font_path, "Different Game Mode", 60, self.RED)
             else:
-                text_diff_game_mode = self.create_font(
-                    "Different Game Mode", 60, self.WHITE)
+                text_diff_game_mode = create_font(
+                    self.font_path, "Different Game Mode", 60, self.WHITE)
 
             if selected == "quit":
-                quit = self.create_font("Quit", 60, self.RED)
+                quit = create_font(self.font_path, "Quit", 60, self.RED)
             else:
-                quit = self.create_font("Quit", 60, self.WHITE)
+                quit = create_font(self.font_path, "Quit", 60, self.WHITE)
 
             # The space between each game option (with 10 px buffer)
             vertical_offset = text_play_again.get_height() + 10
