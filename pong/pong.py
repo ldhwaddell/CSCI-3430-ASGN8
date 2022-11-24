@@ -131,7 +131,6 @@ def hardcoded_bot_paddle_movement(keys, ball, paddle1, paddle2):
     elif paddle2.y >= 400:
         paddle2.y = 400
 
-    
     if ball.y <= paddle2.y + (PADDLE_HEIGHT // 2) and ball.y - paddle2.y - (PADDLE_HEIGHT // 2) < -4:
         paddle2.move(up=True)
     elif ball.y <= paddle2.y + (PADDLE_HEIGHT // 2):
