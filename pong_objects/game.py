@@ -25,13 +25,15 @@ class Game:
         self.width = width
         self.height = height
         self.window = window
+        self.left_hits = 0
+        self.right_hits = 0
+        self.left_score = 0
+        self.right_score = 0
 
         # Instantiate paddles and ball
         self.left_paddle = Paddle(self.RED, 10, self.height //
-                             2 - Paddle.HEIGHT // 2)
+                                  2 - Paddle.HEIGHT // 2)
         self.right_paddle = Paddle(self.TURQUOISE, self.width - 10 -
-                              Paddle.WIDTH, self.height // 2 - Paddle.HEIGHT // 2)
+                                   Paddle.WIDTH, self.height // 2 - Paddle.HEIGHT // 2)
 
         self.ball = Ball(self.GOLD, self.width // 2, self.height // 2)
-
-        

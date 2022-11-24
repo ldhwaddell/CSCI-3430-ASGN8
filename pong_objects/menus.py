@@ -4,7 +4,18 @@ import pygame
 
 
 class Menus:
-    """icmeioc"""
+    """
+    A class to contain the two different menu options, the main menu
+    and the game over menu. When the user runs the game, they will be 
+    presented with the main menu. When the user wins a game, or loses to either type of bot, 
+    they will be presented with the game over menu. 
+
+    Parameters:
+        window: The pygame window to draw the menu in to
+        fps: The rate at which pygame should refresh the menu screens
+        width: The width of the window in pixels
+        height: The height of the window in pixels
+    """
     # Class attributes
     font_path = "resources/fonts/ARCADECLASSIC.ttf"
     RED = (255, 0, 0)
@@ -18,16 +29,29 @@ class Menus:
         self.height = height
 
     def create_font(self, text, size, colour):
+        """
+        Create a font with the given parameters. 
+
+        Parameters: 
+            text: The text to be displayed in the font
+            size: The size of the font in pixels
+            colour: The colour of the font
+        """
         font = pygame.font.Font(self.font_path, size)
         return font.render(text, 1, colour)
 
     def main_menu(self):
+        """
+        Present the main menu to the user.
+        """
+        # Remove all existing objects from the window by filling it with black
         self.window.fill(self.BLACK)
         pygame.display.set_caption("Main Menu")
         clock = pygame.time.Clock()
         menu = True
         selected = "2_player"
 
+        # Run while the user has not clicked out of the menu
         while menu:
             clock.tick(self.fps)
 
@@ -58,10 +82,10 @@ class Menus:
                     # Logic for user pressing enter on selection
                     if event.key == pygame.K_RETURN:
                         if selected == "2_player":
-                            #pong_game("2_player")
+                            # pong_game("2_player")
                             print("2 play")
                         elif selected == "1_player_hardcoded_bot":
-                            #pong_game("1_player_hardcoded_bot")
+                            # pong_game("1_player_hardcoded_bot")
                             print("1 play bot ")
                         elif selected == "1_player_trained_bot":
                             print("1_player_trained_bot")
@@ -101,7 +125,8 @@ class Menus:
             # The space between each game option (with 10 px buffer)
             vertical_offset = text_2_player.get_height() + 10
 
-            # Draw the title and text options. The center of screen is found and then text is moved 40 pixels up to ensure spacing fits correctly
+            # Draw the title and text options. The center of screen is found and then
+            # text is moved 40 pixels up to ensure spacing fits correctly
             self.window.blit(
                 title, (self.width // 2 - title.get_width()//2, 30))
             self.window.blit(text_2_player, (self.width // 2 - text_2_player.get_width() //
@@ -117,6 +142,14 @@ class Menus:
             pygame.display.update()
 
     def game_over_menu(self, gamemode, winner):
+        """
+        Draws the game over menu
+
+        Params: 
+            gamemode: Game mode
+            winner: Winner of the game
+        """
+        # Remove all existing objects from the window by filling it with black
         self.window.fill(self.BLACK)
         pygame.display.set_caption("Game Over")
         clock = pygame.time.Clock()
