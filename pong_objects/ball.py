@@ -1,6 +1,7 @@
 import pygame
 
 class Ball:
+    """"""
     # Class attributes
     MAX_X_VELOCITY = 4
 
