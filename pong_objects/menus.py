@@ -113,21 +113,21 @@ class Menus:
             else:
                 quit = create_font(self.font_path, "Quit", 60, self.WHITE)
 
-            # The space between each game option (with 10 px buffer)
-            vertical_offset = text_2_player.get_height() + 10
+            # The space between each game option
+            vertical_offset = text_2_player.get_height()
 
             # Draw the title and text options. The center of screen is found and then
             # text is moved 40 pixels up to ensure spacing fits correctly
             self.window.blit(
                 title, (self.width // 2 - title.get_width()//2, 30))
             self.window.blit(text_2_player, (self.width // 2 - text_2_player.get_width() //
-                                             2, self.height//2-text_2_player.get_height()//2 - 40))
+                                             2, self.height//2-text_2_player.get_height()//2 - 60))
             self.window.blit(text_1_player_hardcoded_bot, (self.width // 2 - text_1_player_hardcoded_bot.get_width() //
-                                                           2, (self.height//2-text_1_player_hardcoded_bot.get_height()//2 - 40) + vertical_offset))
+                                                           2, (self.height//2-text_1_player_hardcoded_bot.get_height()//2 - 60) + vertical_offset))
             self.window.blit(text_1_player_trained_bot, (self.width // 2 - text_1_player_trained_bot.get_width() //
-                                                         2, (self.height//2-text_1_player_trained_bot.get_height()//2 - 40) + 2*(vertical_offset)))
+                                                         2, (self.height//2-text_1_player_trained_bot.get_height()//2 - 60) + 2*(vertical_offset)))
             self.window.blit(quit, (self.width // 2 - quit.get_width()//2,
-                                    (self.height//2-quit.get_height()//2 - 40) + 3*(vertical_offset)))
+                                    (self.height//2-quit.get_height()//2 - 60) + 3*(vertical_offset)))
 
             # Refresh display to show selection
             pygame.display.update()
@@ -210,9 +210,9 @@ class Menus:
                 quit = create_font(self.font_path, "Quit", 60, self.WHITE)
 
             # The space between each game option (with 10 px buffer)
-            vertical_offset = text_play_again.get_height() + 10
+            vertical_offset = text_play_again.get_height()
 
-            # Draw the title and text options. The center of screen is found and then text is moved 40 pixels up to ensure spacing fits correctly
+            # Draw the title and text options.
             self.window.blit(
                 title, (self.width // 2 - title.get_width()//2, 30))
             self.window.blit(text_play_again, (self.width // 2 - text_play_again.get_width() //
