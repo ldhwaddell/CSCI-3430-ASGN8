@@ -1,7 +1,8 @@
 import sys
-
 import pygame
+
 from .utils import create_font, colours
+from .game_modes import PongGame
 
 
 class Menus:
@@ -69,7 +70,8 @@ class Menus:
                     if event.key == pygame.K_RETURN:
                         if selected == "2_player":
                             # pong_game("2_player")
-                            print("2 play")
+                            self.instantiate_game("2_player")
+                            #print("2 play")
                         elif selected == "1_player_hardcoded_bot":
                             # pong_game("1_player_hardcoded_bot")
                             print("1 play bot ")
@@ -108,7 +110,8 @@ class Menus:
             if selected == "quit":
                 quit = create_font(self.font_path, "Quit", 60, colours["red"])
             else:
-                quit = create_font(self.font_path, "Quit", 60, colours["white"])
+                quit = create_font(self.font_path, "Quit",
+                                   60, colours["white"])
 
             # The space between each game option
             vertical_offset = text_2_player.get_height()
@@ -204,7 +207,8 @@ class Menus:
             if selected == "quit":
                 quit = create_font(self.font_path, "Quit", 60, colours["red"])
             else:
-                quit = create_font(self.font_path, "Quit", 60, colours["white"])
+                quit = create_font(self.font_path, "Quit",
+                                   60, colours["white"])
 
             # The space between each game option (with 10 px buffer)
             vertical_offset = text_play_again.get_height()
@@ -221,3 +225,16 @@ class Menus:
 
             # Refresh display to show selection
             pygame.display.update()
+
+    def instantiate_game(self, gamemode):
+        if gamemode == "2_player":
+            self.instantiate_2_player()
+        else:
+            print("Game mode not yet implemented")
+
+    def instantiate_2_player(self):
+        """
+        Instantiate a loop of a 2 player game
+        """
+        pong = PongGame(self.window, self.width, self.height)
+        pong.two_player()

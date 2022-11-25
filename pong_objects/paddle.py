@@ -1,5 +1,6 @@
 import pygame
 
+
 class Paddle:
     # Class attributes
     VELOCITY = 4  # Move 4 units at a time
@@ -10,7 +11,6 @@ class Paddle:
         self.colour = colour
         self.x = self.original_x = x
         self.y = self.original_y = y
-        
 
     def draw(self, win):
         pygame.draw.rect(win, self.colour,
