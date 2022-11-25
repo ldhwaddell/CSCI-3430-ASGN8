@@ -3,11 +3,6 @@ import sys
 from .utils import colours
 from .game import Game
 
-#win = pygame.display.set_mode((700, 500))
-#test = Menus(win, 60, 700, 600)
-# test.main_menu()
-
-
 class PongGame():
     def __init__(self, window, width, height):
         self.game = Game(window, width, height)
