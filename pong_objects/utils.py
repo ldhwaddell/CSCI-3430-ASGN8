@@ -1,5 +1,16 @@
 import pygame
 
+# Object to hold all colours used in game
+colours = {
+    "turquoise": (0, 255, 255),
+    "gold": (255, 215, 0),
+    "red": (255, 0, 0),
+    "black": (0, 0, 0),
+    "white": (255, 255, 255),
+
+}
+
+
 def create_font(font_path, text, size, colour):
     """
     Create a font with the given parameters. 
