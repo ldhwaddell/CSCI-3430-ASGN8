@@ -14,11 +14,13 @@ class GameInfo:
         self.left_score = left_score
         self.right_score = right_score
 
+    def __repr__(self):
+        return f'GameInfo(left_hits={self.left_hits}, right_hits={self.right_hits}, left_score={self.left_score}, right_score={self.right_score})'
+
 
 class Game:
     # Class Attributes
     font_path = "resources/fonts/ARCADECLASSIC.ttf"
-    win_sound_path = "resources/sounds/smb_stage_clear.wav"
     win_score = 2
 
     def __init__(self, window, width, height):
@@ -88,7 +90,6 @@ class Game:
         right_paddle = self.right_paddle
 
         # If the ball hits the bottom or top of the window, reverse its y direction
-        print(self.height)
         if ball.y + ball.RADIUS >= self.height:
             ball.y_velocity *= -1
         elif ball.y - ball.RADIUS <= 0:
@@ -165,19 +166,6 @@ class Game:
         elif self.ball.x > self.width:
             self.ball.reset()
             self.left_score += 1
-
-        won = False
-
-        if self.left_score >= self.win_score:
-            won = True
-        elif self.right_score >= self.win_score:
-            won = True
-
-        if won:
-            # Play Sound
-            pygame.mixer.init()
-            pygame.mixer.music.load(self.win_sound_path)
-            pygame.mixer.music.play(loops=1)
 
         game_info = GameInfo(
             self.left_hits, self.right_hits, self.left_score, self.right_score)

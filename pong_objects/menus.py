@@ -27,7 +27,7 @@ class Menus:
         self.width = width
         self.height = height
 
-    def main_menu(self):
+    def draw_main(self):
         """
         Present the main menu to the user.
         """
@@ -70,7 +70,9 @@ class Menus:
                     if event.key == pygame.K_RETURN:
                         if selected == "2_player":
                             # pong_game("2_player")
-                            self.instantiate_game("2_player")
+                            status = self.instantiate_game("2_player")
+                            if status is False:
+                                self.draw_game_over("test", "test1")
                             #print("2 play")
                         elif selected == "1_player_hardcoded_bot":
                             # pong_game("1_player_hardcoded_bot")
@@ -132,7 +134,7 @@ class Menus:
             # Refresh display to show selection
             pygame.display.update()
 
-    def game_over_menu(self, gamemode, winner):
+    def draw_game_over(self, gamemode, winner):
         """
         Draws the game over menu
 
@@ -237,4 +239,6 @@ class Menus:
         Instantiate a loop of a 2 player game
         """
         pong = PongGame(self.window, self.width, self.height)
-        pong.two_player()
+        status = pong.two_player()
+        return status
+

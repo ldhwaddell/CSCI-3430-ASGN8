@@ -4,7 +4,12 @@ from .utils import colours
 from .game import Game
 
 class PongGame():
+    win_sound_path = "resources/sounds/smb_stage_clear.wav"
+    win_score = 2
     def __init__(self, window, width, height):
+        self.window = window
+        self.width = width
+        self.height = height
         self.game = Game(window, width, height)
         self.ball = self.game.ball
         self.left_paddle = self.game.left_paddle
@@ -42,4 +47,20 @@ class PongGame():
                 self.game.move_paddles(left=False, up=False)
 
             self.game.draw(draw_score=True)
+            #print(repr(game_info))
+
+            won = False
+
+            if game_info.left_score >= self.win_score:
+                won = True
+            elif game_info.right_score >= self.win_score:
+                won = True
+
+            if won:
+                # Play Sound
+                pygame.mixer.init()
+                pygame.mixer.music.load(self.win_sound_path)
+                pygame.mixer.music.play(loops=1)
+                run = False
             pygame.display.update()
+        return run
