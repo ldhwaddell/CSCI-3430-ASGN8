@@ -237,3 +237,15 @@ class PongGame():
             paddle.move(up=False)
         elif ball.y >= paddle.y + (paddle.HEIGHT // 2):
             paddle.y += 1
+
+    def _get_net(self):
+        """
+        Gets the best neural network for the player to play against
+
+        returns: 
+            net: The best net to play against
+        """
+        ...
+
+    def one_player_trained_bot(self, net):
+        ...
