@@ -2,7 +2,6 @@ import sys
 import pygame
 
 from .utils import create_font, colours
-from .game_modes import PongGame
 
 
 class Menus:
@@ -69,16 +68,13 @@ class Menus:
                     # Logic for user pressing enter on selection
                     if event.key == pygame.K_RETURN:
                         if selected == "2_player":
-                            # pong_game("2_player")
-                            status = self.instantiate_game("2_player")
-                            if status is False:
-                                self.draw_game_over("test", "test1")
-                            #print("2 play")
+                            return "2_player"
                         elif selected == "1_player_hardcoded_bot":
-                            # pong_game("1_player_hardcoded_bot")
                             print("1 play bot ")
+                            return "1_player_hardcoded_bot"
                         elif selected == "1_player_trained_bot":
                             print("1_player_trained_bot")
+                            return "1_player_trained_bot"
                         elif selected == "quit":
                             menu = False
                             print("[+] User has exited game")
@@ -134,7 +130,7 @@ class Menus:
             # Refresh display to show selection
             pygame.display.update()
 
-    def draw_game_over(self, gamemode, winner):
+    def draw_game_over(self, game_mode, winner):
         """
         Draws the game over menu
 
@@ -178,10 +174,9 @@ class Menus:
                     # Logic for user pressing enter on selection
                     if event.key == pygame.K_RETURN:
                         if selected == "play_again":
-                            # pong_game(gamemode)
-                            print("here")
+                            return game_mode
                         elif selected == "diff_game_mode":
-                            self.main_menu()
+                            return "diff_game_mode"
                         elif selected == "quit":
                             game_over = False
                             print("[+] User has exited the game")
@@ -228,17 +223,4 @@ class Menus:
             # Refresh display to show selection
             pygame.display.update()
 
-    def instantiate_game(self, gamemode):
-        if gamemode == "2_player":
-            self.instantiate_2_player()
-        else:
-            print("Game mode not yet implemented")
-
-    def instantiate_2_player(self):
-        """
-        Instantiate a loop of a 2 player game
-        """
-        pong = PongGame(self.window, self.width, self.height)
-        status = pong.two_player()
-        return status
 

@@ -1,8 +1,9 @@
 import pygame
-from pong_objects.menus import Menus
+from pong_objects.game_modes import PongGame
 
 
 if __name__ == '__main__':
     window = pygame.display.set_mode((700, 500))
-    menu = Menus(window, 60, 700, 500)
-    menu.draw_main()
+    game = PongGame(window, 60, 700, 500)
+    game.start_screen()
+
