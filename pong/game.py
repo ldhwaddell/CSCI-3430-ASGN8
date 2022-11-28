@@ -1,8 +1,9 @@
+import pygame
+
 from .paddle import Paddle
 from .ball import Ball
 from .utils import colours, create_font
 
-import pygame
 pygame.init()
 
 
@@ -15,7 +16,7 @@ class GameInfo:
         self.right_score = right_score
 
     def __repr__(self):
-        return f'GameInfo(left_hits={self.left_hits}, right_hits={self.right_hits}, left_score={self.left_score}, right_score={self.right_score})'
+        return f"GameInfo(left_hits={self.left_hits}, right_hits={self.right_hits}, left_score={self.left_score}, right_score={self.right_score})"
 
 
 class Game:
@@ -127,7 +128,6 @@ class Game:
                     ball.y_velocity = -y_velocity
                     self.right_hits += 1
 
-
     def move_paddles(self, left=True, up=True):
         if left:
             if up and self.left_paddle.y - Paddle.VELOCITY < 0:
@@ -174,4 +174,3 @@ class Game:
             self.left_hits, self.right_hits, self.left_score, self.right_score)
 
         return game_info
-

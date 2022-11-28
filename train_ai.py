@@ -1,8 +1,10 @@
-import pygame
-import sys
-import neat
 import os
 import pickle
+import sys
+
+import neat
+import pygame
+
 from pong.game import Game
 
 
@@ -147,10 +149,8 @@ def test_ai(config):
 
 if __name__ == '__main__':
     config = get_config()
-    #run_neat(config)
+    # run_neat(config)
     test_ai(config)
-
-
 
     #width, height = 700, 500
     #win = pygame.display.set_mode((width, height))

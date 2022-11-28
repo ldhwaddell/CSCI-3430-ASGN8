@@ -1,5 +1,7 @@
-import pygame
 import sys
+
+import pygame
+
 from .utils import colours
 from .game import Game
 from .menus import Menus

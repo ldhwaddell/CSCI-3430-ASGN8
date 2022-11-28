@@ -1,4 +1,5 @@
 import sys
+
 import pygame
 
 from .utils import create_font, colours

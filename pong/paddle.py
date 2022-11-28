@@ -8,7 +8,7 @@ class Paddle:
     :param colour: The colour of the paddle
     :param x: The x position of the paddle
     :param y: The y position of the paddle
-    
+
     """
     # Class attributes
     VELOCITY = 4  # Move 4 units at a time
