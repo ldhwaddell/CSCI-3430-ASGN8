@@ -1,5 +1,5 @@
 import pygame
-from pong_objects.game_modes import PongGame
+from pong.game_modes import PongGame
 
 
 if __name__ == '__main__':
