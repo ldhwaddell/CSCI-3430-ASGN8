@@ -1,6 +1,7 @@
 [NEAT]
 fitness_criterion     = max
-fitness_threshold     = 400 # Stop when a genome has fitness criteria of 400 or more
+# Stop when a genome has fitness criteria of 400 or more
+fitness_threshold     = 400
 pop_size              = 50
 reset_on_extinction   = False
 

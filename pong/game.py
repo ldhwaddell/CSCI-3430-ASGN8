@@ -62,10 +62,10 @@ class Game:
 
     def draw_hits(self):
         hits_text = create_font(
-            self.font_path, f"{self.left_hits + self.right_hits}", 60, colours["white"])
+            self.font_path, f"{self.left_hits + self.right_hits}", 60, colours["red"])
 
-        self.window.blit(hits_text, (self.width // 2 -
-                         hits_text.get_width() // 2), 1)
+        self.window.blit(hits_text, ((self.width // 2 -
+                         hits_text.get_width() // 2), 1))
 
     def draw(self, draw_score=True, draw_hits=False):
         self.window.fill(colours["black"])
@@ -110,6 +110,7 @@ class Game:
                         left_paddle.HEIGHT / 2) / ball.MAX_X_VELOCITY
                     y_velocity = y_diff / reduction_factor
                     ball.y_velocity = -y_velocity
+                    self.left_hits += 1
 
         # For bot_paddle
         else:
@@ -124,6 +125,8 @@ class Game:
                         ball.MAX_X_VELOCITY
                     y_velocity = y_diff / reduction_factor
                     ball.y_velocity = -y_velocity
+                    self.right_hits += 1
+
 
     def move_paddles(self, left=True, up=True):
         if left:

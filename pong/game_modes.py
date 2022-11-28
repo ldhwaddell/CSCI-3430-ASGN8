@@ -1,7 +1,5 @@
 import pygame
 import sys
-import neat
-import os
 from .utils import colours
 from .game import Game
 from .menus import Menus
@@ -171,36 +169,17 @@ class PongGame():
         elif ball.y >= paddle.y + (paddle.HEIGHT // 2):
             paddle.y += 1
 
-    def test_ai(self):
-        self.get_config()
-        self._stop_music()
-        self.window.fill(colours["black"])
-        clock = pygame.time.Clock()
-        run = True
-        while run:
-            clock.tick(self.fps)
-            game_info = self.game.loop()
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    # Empty screen
-                    self.game.window.fill(colours["black"])
-                    run = False
-                    print("[+] User has exited game")
-                    pygame.quit(), sys.exit()
 
-            keys = pygame.key.get_pressed()
 
-            if keys[pygame.K_q]:
-                self.game.move_paddles(left=True, up=True)
-            elif keys[pygame.K_a]:
-                self.game.move_paddles(left=True, up=False)
 
-            #print(repr(game_info))
-            self.game.draw(draw_score=True)
-            pygame.display.update()
 
-    def get_config(self):
-        neat_dir = os.path.dirname("/Users/lucaswaddell/Desktop/SCHOOL/YEAR3/CSCI 3430/a8/CSCI-3430-ASGN8/resources/NEAT/")
-        config_path = os.path.join(neat_dir, "config.txt")
-        print(config_path)
+
+
+
+
+
+
+            
+
+
