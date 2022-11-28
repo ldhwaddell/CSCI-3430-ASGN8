@@ -151,8 +151,3 @@ if __name__ == '__main__':
     config = get_config()
     # run_neat(config)
     test_ai(config)
-
-    #width, height = 700, 500
-    #win = pygame.display.set_mode((width, height))
-    #game = PongGame(win, 60, width, height)
-    # game.test_ai()
