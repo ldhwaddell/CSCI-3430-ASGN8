@@ -172,5 +172,3 @@ class Game:
 
         return game_info
 
-    def instantiate_game_over_menu(self):
-        ...

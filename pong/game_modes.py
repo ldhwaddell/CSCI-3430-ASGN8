@@ -7,7 +7,7 @@ from .menus import Menus
 
 class PongGame():
     win_sound_path = "resources/sounds/smb_stage_clear.wav"
-    win_score = 1
+    win_score = 2
 
     def __init__(self, window, fps, width, height):
         self.window = window
@@ -23,39 +23,41 @@ class PongGame():
         self.sound = pygame.mixer
         self.sound.init()
 
-    def stop_music(self):
+    def _stop_music(self):
         # Check if game over sound is playing and stop if it is
         if self.sound.music.get_busy():
             self.sound.music.stop()
 
     def start_screen(self, game_mode=None):
-        self.stop_music()
+        self._stop_music()
         if game_mode is None:
             game_mode = self.menu.draw_main()
         if game_mode == "2_player":
             self.two_player()
         elif game_mode == "1_player_hardcoded_bot":
             self.one_player_hardcoded_bot()
+        elif game_mode == "1_player_trained_bot":
+            self.test_ai()
 
-    def game_over_screen(self, game_mode, winner):
+    def _game_over_screen(self, game_mode, winner):
         status = self.menu.draw_game_over(game_mode, winner)
         if status == "diff_game_mode":
             self.start_screen(game_mode=None)
         else:
             self.start_screen(game_mode=game_mode)
 
-    def game_over(self, game_mode, winner):
+    def _game_over(self, game_mode, winner):
         self.sound.music.load(self.win_sound_path)
         self.sound.music.play(loops=1)
         self.game.reset()
-        self.game_over_screen(game_mode=game_mode, winner=winner)
+        self._game_over_screen(game_mode=game_mode, winner=winner)
         return False
 
     def two_player(self):
         """
         Start a pong game with two players.
         """
-        self.stop_music()
+        self._stop_music()
         self.window.fill(colours["black"])
         pygame.display.set_caption("2 Player Pong")
         clock = pygame.time.Clock()
@@ -97,7 +99,7 @@ class PongGame():
                 winner = "Player 2"
 
             if won:
-                run = self.game_over(game_mode="2_player", winner=winner)
+                run = self._game_over(game_mode="2_player", winner=winner)
 
             pygame.display.update()
 
@@ -106,7 +108,7 @@ class PongGame():
         Start a pong game with one player against an impossible to beat
         hardcoded bot.
         """
-        self.stop_music()
+        self._stop_music()
         self.window.fill(colours["black"])
         pygame.display.set_caption("1 Player Pong")
         clock = pygame.time.Clock()
@@ -130,7 +132,7 @@ class PongGame():
             elif keys[pygame.K_a]:
                 self.game.move_paddles(left=True, up=False)
 
-            self.hardcoded_bot_movement()
+            self._hardcoded_bot_movement()
 
             self.game.draw(draw_score=True)
 
@@ -144,14 +146,14 @@ class PongGame():
                 winner = "Bot"
 
             if won:
-                run = self.game_over(
+                run = self._game_over(
                     game_mode="1_player_hardcoded_bot", winner=winner)
 
             pygame.display.update()
 
-    def hardcoded_bot_movement(self):
+    def _hardcoded_bot_movement(self):
         paddle = self.right_paddle
-        ball = self.game.ball
+        ball = self.ball
         if paddle.y <= 0:
             paddle.y = 0
         elif paddle.y >= 400:
@@ -166,3 +168,6 @@ class PongGame():
             paddle.move(up=False)
         elif ball.y >= paddle.y + (paddle.HEIGHT // 2):
             paddle.y += 1
+
+    def test_ai(self):
+        ...

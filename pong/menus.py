@@ -70,10 +70,8 @@ class Menus:
                         if selected == "2_player":
                             return "2_player"
                         elif selected == "1_player_hardcoded_bot":
-                            print("1 play bot ")
                             return "1_player_hardcoded_bot"
                         elif selected == "1_player_trained_bot":
-                            print("1_player_trained_bot")
                             return "1_player_trained_bot"
                         elif selected == "quit":
                             menu = False
