@@ -58,9 +58,7 @@ class PongGame():
         net2 = neat.nn.FeedForwardNetwork.create(genome2, config)
 
         run = True
-        clock = pygame.time.Clock()
         while run:
-            # clock.tick(self.fps)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     quit()

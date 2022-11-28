@@ -40,7 +40,7 @@ class PongGame():
             self.test_ai()
 
     def _game_over_screen(self, game_mode, winner):
-        status = self.menu.draw_game_over(game_mode, winner)
+        status = self.menu.draw_game_over(winner)
         if status == "diff_game_mode":
             self.start_screen(game_mode=None)
         else:

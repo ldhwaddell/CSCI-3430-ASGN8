@@ -11,11 +11,10 @@ class Menus:
     presented with the main menu. When the user wins a game, or loses to either type of bot, 
     they will be presented with the game over menu. 
 
-    Parameters:
-        window: The pygame window to draw the menu in to
-        fps: The rate at which pygame should refresh the menu screens
-        width: The width of the window in pixels
-        height: The height of the window in pixels
+    :param window: The pygame window to draw the menu in to
+    :param fps: The rate at which pygame should refresh the menu screens
+    :param width: The width of the window in pixels
+    :param height: The height of the window in pixels
     """
     # Class attributes
     font_path = "resources/fonts/ARCADECLASSIC.ttf"
@@ -25,6 +24,22 @@ class Menus:
         self.fps = fps
         self.width = width
         self.height = height
+
+    def _draw_text(self, title, text, offset=0):
+        """
+        Draws text on the screen
+        :param title: Text to be displayed on the screen
+        :param text: Text to be displayed
+        :param offset: Vertical offset of the text
+        """
+        # Draw the title
+        self.window.blit(title, (self.width//2 - title.get_width()//2, 30))
+
+        spacing = text[0].get_height()
+
+        for i, t in enumerate(text):
+            self.window.blit(t, (self.width // 2 - t.get_width() // 2,
+                             (self.height // 2 - t.get_height() // 2 - offset) + (i * spacing)))
 
     def draw_main(self):
         """
@@ -67,16 +82,12 @@ class Menus:
 
                     # Logic for user pressing enter on selection
                     if event.key == pygame.K_RETURN:
-                        if selected == "2_player":
-                            return "2_player"
-                        elif selected == "1_player_hardcoded_bot":
-                            return "1_player_hardcoded_bot"
-                        elif selected == "1_player_trained_bot":
-                            return "1_player_trained_bot"
-                        elif selected == "quit":
+                        if selected == "quit":
                             menu = False
                             print("[+] User has exited game")
                             pygame.quit(), sys.exit()
+                        else:
+                            return selected
 
             # Main menu text
             title = create_font(self.font_path, "PONG", 85, colours["white"])
@@ -109,32 +120,18 @@ class Menus:
                 quit = create_font(self.font_path, "Quit",
                                    60, colours["white"])
 
-            # The space between each game option
-            vertical_offset = text_2_player.get_height()
-
-            # Draw the title and text options. The center of screen is found and then
-            # text is moved 40 pixels up to ensure spacing fits correctly
-            self.window.blit(
-                title, (self.width // 2 - title.get_width()//2, 30))
-            self.window.blit(text_2_player, (self.width // 2 - text_2_player.get_width() //
-                                             2, self.height//2-text_2_player.get_height()//2 - 60))
-            self.window.blit(text_1_player_hardcoded_bot, (self.width // 2 - text_1_player_hardcoded_bot.get_width() //
-                                                           2, (self.height//2-text_1_player_hardcoded_bot.get_height()//2 - 60) + vertical_offset))
-            self.window.blit(text_1_player_trained_bot, (self.width // 2 - text_1_player_trained_bot.get_width() //
-                                                         2, (self.height//2-text_1_player_trained_bot.get_height()//2 - 60) + 2*(vertical_offset)))
-            self.window.blit(quit, (self.width // 2 - quit.get_width()//2,
-                                    (self.height//2-quit.get_height()//2 - 60) + 3*(vertical_offset)))
+            # Draw the options on screen
+            text = [text_2_player, text_1_player_hardcoded_bot,
+                    text_1_player_trained_bot, quit]
+            self._draw_text(title, text, offset=60)
 
             # Refresh display to show selection
             pygame.display.update()
 
-    def draw_game_over(self, game_mode, winner):
+    def draw_game_over(self, winner):
         """
         Draws the game over menu
-
-        Params: 
-            gamemode: Game mode
-            winner: Winner of the game
+        :param winner: Winner of the game
         """
         # Remove all existing objects from the window by filling it with black
         self.window.fill(colours["black"])
@@ -171,14 +168,12 @@ class Menus:
 
                     # Logic for user pressing enter on selection
                     if event.key == pygame.K_RETURN:
-                        if selected == "play_again":
-                            return game_mode
-                        elif selected == "diff_game_mode":
-                            return "diff_game_mode"
-                        elif selected == "quit":
+                        if selected == "quit":
                             game_over = False
                             print("[+] User has exited the game")
                             pygame.quit(), sys.exit()
+                        else:
+                            return selected
 
             # Main menu text
             title = create_font(
@@ -205,20 +200,9 @@ class Menus:
                 quit = create_font(self.font_path, "Quit",
                                    60, colours["white"])
 
-            # The space between each game option (with 10 px buffer)
-            vertical_offset = text_play_again.get_height()
-
-            # Draw the title and text options.
-            self.window.blit(
-                title, (self.width // 2 - title.get_width()//2, 30))
-            self.window.blit(text_play_again, (self.width // 2 - text_play_again.get_width() //
-                                               2, self.height // 2 - text_play_again.get_height() // 2))
-            self.window.blit(text_diff_game_mode, (self.width // 2 - text_diff_game_mode.get_width() //
-                                                   2, (self.height//2 - text_diff_game_mode.get_height() // 2) + vertical_offset))
-            self.window.blit(quit, (self.width // 2 - quit.get_width() // 2,
-                                    (self.height // 2 - quit.get_height() // 2) + 2 * (vertical_offset)))
+            # Draw the options on screen
+            text = [text_play_again, text_diff_game_mode, quit]
+            self._draw_text(title, text)
 
             # Refresh display to show selection
             pygame.display.update()
-
-

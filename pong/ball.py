@@ -4,7 +4,10 @@ import random
 
 
 class Ball:
-    """"""
+    """
+    
+    
+    """
     # Class attributes
     MAX_X_VELOCITY = 4
     RADIUS = 9

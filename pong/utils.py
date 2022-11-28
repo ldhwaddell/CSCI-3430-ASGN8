@@ -9,7 +9,7 @@ colours = {
     "white": (255, 255, 255),
 }
 
-
+# Function used across numerous classes
 def create_font(font_path, text, size, colour):
     """
     Create a font with the given parameters. 
