@@ -14,8 +14,8 @@
        be possible to beat it. The code for training this bot can be found in train_ai.py. 
 
 Requirements:
-    - pygame
-    - neat-python
+- pygame
+- neat-python
 
 Both can be found in the requirements.txt file. 
 
