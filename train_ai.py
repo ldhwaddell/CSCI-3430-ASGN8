@@ -133,19 +133,24 @@ def run_neat(config):
         pickle.dump(winner, f)
 
 
-def test_ai():
+def test_ai(config):
     width, height = 700, 500
     win = pygame.display.set_mode((width, height))
-    config = get_config()
     with open("best.pickle", "rb") as f:
-        pickle.load(f)
+        winner = pickle.load(f)
+
+    winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
 
     game = PongGame(win, 60, width, height)
+    game.test_ai(winner_net, config)
 
 
 if __name__ == '__main__':
     config = get_config()
-    run_neat(config)
+    #run_neat(config)
+    test_ai(config)
+
+
 
     #width, height = 700, 500
     #win = pygame.display.set_mode((width, height))
