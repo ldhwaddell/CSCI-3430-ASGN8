@@ -106,7 +106,7 @@ class PongGame():
             else:
                 valid = self.game.move_paddles(left=left, up=False)
 
-            # If the AI wants to make an invlaid move, massively discourage it
+            # If the AI wants to make an invalid move, massively discourage it
             # Invalid can be defined as moving off the screen
             if not valid:
                 genome.fitness -= 1
