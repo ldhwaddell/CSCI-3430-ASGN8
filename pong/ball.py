@@ -13,7 +13,7 @@ class Ball:
     :param y: The y position of the ball
     """
     # Class attributes
-    MAX_X_VELOCITY = 4
+    MAX_X_VELOCITY = 5
     RADIUS = 9
 
     def __init__(self, colour, x, y):

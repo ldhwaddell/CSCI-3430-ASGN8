@@ -1,5 +1,8 @@
+import os
+import pickle
 import sys
 
+import neat
 import pygame
 
 from .utils import colours
@@ -25,8 +28,10 @@ class PongGame():
     1 Player Trained Bot: 
        A 1 player pong game where the human uses the Q and A keys and plays against a bot with a 
        trained neural network. The bot was trained over the course of several hours by leaving it to run overnight. 
-       It should not be possible to beat this bot as it should have been trained to perfection but I guess it might 
-       be possible to beat it. 
+       It should not be possible to beat this bot as it "should" have been trained to perfection. It's movement is extremely jittery.
+       This is likely causes by the fact this it can only move +/- 4 pixels at a time, as a result, when it is moving up and down 
+       extremely fast, it appears to be glitching or jittering
+
 
     :param window: The pygame window to draw the game in to
     :param fps: The rate at which pygame should refresh the game screens
@@ -70,11 +75,11 @@ class PongGame():
 
         # Otherwise if there is a selected game mode, start that type of game
         if game_mode == "2_player":
-            self.two_player()
+            self._two_player()
         elif game_mode == "1_player_hardcoded_bot":
-            self.one_player_hardcoded_bot()
+            self._one_player_hardcoded_bot()
         elif game_mode == "1_player_trained_bot":
-            self.test_ai()
+            self._one_player_trained_bot()
 
     def _game_over_screen(self, game_mode, winner):
         """
@@ -104,7 +109,7 @@ class PongGame():
         self._game_over_screen(game_mode=game_mode, winner=winner)
         return False
 
-    def two_player(self):
+    def _two_player(self):
         """
         Start a pong game with two players.
         """
@@ -156,7 +161,7 @@ class PongGame():
 
             pygame.display.update()
 
-    def one_player_hardcoded_bot(self):
+    def _one_player_hardcoded_bot(self):
         """
         Start a pong game with one player against an impossible to beat
         hardcoded bot.
@@ -245,7 +250,85 @@ class PongGame():
         returns: 
             net: The best net to play against
         """
-        ...
+        with open("net.pickle", "rb") as f:
+            net = pickle.load(f)
+        return net
 
-    def one_player_trained_bot(self, net):
-        ...
+    def _get_config(self):
+        """
+        Gets the configuration for the neural network
+
+        returns: 
+            config: The neural network configuration
+        """
+        # Get root directory
+        dir = os.path.dirname(os.path.dirname(__file__))
+        # Find config file
+        config_path = os.path.join(dir, "config.txt")
+        # Create config object
+        config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
+                             neat.DefaultSpeciesSet, neat.DefaultStagnation,
+                             config_path)
+        return config
+
+    def _one_player_trained_bot(self):
+        """
+        Start a pong game with one player against a NEAT neural network
+        """
+        # Get config file
+        config = self._get_config()
+        # Get the best neural network configuration
+        net_obj = self._get_net()
+        net = neat.nn.FeedForwardNetwork.create(net_obj, config)
+        self._stop_music()
+        self.window.fill(colours["black"])
+        clock = pygame.time.Clock()
+        run = True
+        while run:
+            clock.tick(self.fps)
+            game_info = self.game.loop()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    # Empty screen
+                    self.game.window.fill(colours["black"])
+                    run = False
+                    print("[+] User has exited game")
+                    pygame.quit(), sys.exit()
+
+            keys = pygame.key.get_pressed()
+
+            # Activate the neural network to get decisions from it
+            output = net.activate((self.right_paddle.y, abs(
+                self.right_paddle.x - self.ball.x), self.ball.y))
+            decision = output.index(max(output))
+
+            # Allow th eplayer to move
+            if keys[pygame.K_q]:
+                self.game.move_paddles(left=True, up=True)
+            elif keys[pygame.K_a]:
+                self.game.move_paddles(left=True, up=False)
+
+            # Control the paddle based on the neural networks decision
+            if decision == 0:
+                pass
+            if decision == 1:
+                self.game.move_paddles(left=False, up=True)
+            elif decision == 2:
+                self.game.move_paddles(left=False, up=False)
+
+            self.game.draw(draw_score=True)
+
+            won = False
+            # Check for game finishing
+            if game_info.left_score >= self.win_score:
+                won = True
+                winner = "Player"
+            elif game_info.right_score >= self.win_score:
+                won = True
+                winner = "Bot"
+
+            if won:
+                run = self._game_over(
+                    game_mode="1_player_trained_bot", winner=winner)
+            pygame.display.update()

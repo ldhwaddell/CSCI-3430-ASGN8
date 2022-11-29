@@ -63,10 +63,12 @@ class PongGame():
         self.genome2 = genome2
 
         max_hits = 50
-
+        clock = pygame.time.Clock()
         run = True
         start_time = time.time()
         while run:
+            clock.tick(self.fps)
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return True
@@ -152,14 +154,14 @@ def run_neat(config):
     p.add_reporter(neat.Checkpointer(1))
 
     winner = p.run(eval_genomes, 50)
-    with open("best.pickle", "wb") as f:
+    with open("net.pickle", "wb") as f:
         pickle.dump(winner, f)
 
 
 def test_best(config):
     width, height = 700, 500
     win = pygame.display.set_mode((width, height))
-    with open("best.pickle", "rb") as f:
+    with open("net.pickle", "rb") as f:
         winner = pickle.load(f)
 
     winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
@@ -170,5 +172,5 @@ def test_best(config):
 
 if __name__ == '__main__':
     config = get_config()
-    run_neat(config)
-    #test_best(config)
+    #run_neat(config)
+    test_best(config)
