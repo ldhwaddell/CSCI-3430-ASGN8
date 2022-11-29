@@ -12,8 +12,8 @@ from .menus import Menus
 
 class PongGame():
     """
-    Class to create instances of a game of pong with the users deried gamemode. 
-    Instantiateing the pong game and calling the startscreen function presents the main menu and 
+    Class to create instances of a game of pong with the users desired gamemode. 
+    Instantiating the pong game and calling the startscreen function presents the main menu and 
     gives the user a choice of three different game modes to play from. 
 
     2 Player:
@@ -243,7 +243,7 @@ class PongGame():
         elif ball.y >= paddle.y + (paddle.HEIGHT // 2):
             paddle.y += 1
 
-    def _get_net(self):
+    def _get_net(self, config):
         """
         Gets the best neural network for the player to play against
 
@@ -251,7 +251,10 @@ class PongGame():
             net: The best net to play against
         """
         with open("net.pickle", "rb") as f:
-            net = pickle.load(f)
+            net_obj = pickle.load(f)
+
+        net = neat.nn.FeedForwardNetwork.create(net_obj, config)
+
         return net
 
     def _get_config(self):
@@ -278,10 +281,10 @@ class PongGame():
         # Get config file
         config = self._get_config()
         # Get the best neural network configuration
-        net_obj = self._get_net()
-        net = neat.nn.FeedForwardNetwork.create(net_obj, config)
+        net = self._get_net(config)
         self._stop_music()
         self.window.fill(colours["black"])
+        pygame.display.set_caption("1 Player Pong")
         clock = pygame.time.Clock()
         run = True
         while run:
