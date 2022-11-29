@@ -39,7 +39,7 @@ class PongGame():
     :param height: The height of the window in pixels
     """
     win_sound_path = "resources/sounds/smb_stage_clear.wav"
-    win_score = 2
+    win_score = 5
 
     def __init__(self, window, fps, width, height):
         self.window = window
